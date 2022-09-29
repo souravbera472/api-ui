@@ -14,9 +14,10 @@
       show-select
       v-model="selected"
       height="72vh"
+      loading="loader"
       fixed-header
       :options.sync="options"
-      :server-items-length="13"
+      :server-items-length="colLength"
       item-key="_id"
       class="elevation-1"
     >
@@ -26,7 +27,27 @@
         dense
       >
         <v-toolbar-title>All Books</v-toolbar-title>
+         <v-spacer></v-spacer>
+         <div class="textFiled mt-1">
+         <v-text-field 
+         placeholder="Search"
+         @keydown.enter.prevent="loadData"
+         v-model="text" v-if="searchText">
+             
+         </v-text-field>
+         </div>
+        <v-icon @click="searchText=!searchText">
+        mdi-magnify
+        </v-icon>
+        <v-icon 
+        class="ml-2"
+        style="color: rgb(0, 128, 55);"
+        @click="loadData">
+        mdi-refresh
+      </v-icon>
       </v-toolbar>
+     
+      
     </template>
        <template v-slot:items._id="{ on, props }">
         <v-simple-checkbox class="checkbox" v-bind="props" v-on="on"></v-simple-checkbox>
@@ -47,9 +68,13 @@ import {getAllBook} from '../dataProvider/loginServices.js'
     },
     data () {
       return {
+        text:"",
+        searchText: false,
         options: {},
         selected: [ ],
+        colLength: 0,
         cols: [],
+        loader: false,
         search: '',
         headers: [
           {
@@ -61,38 +86,26 @@ import {getAllBook} from '../dataProvider/loginServices.js'
           {
             text: 'Book Name',
             align: 'start',
-            sortable: false,
+            sortable: true,
             value: 'bookName',
           },
           {
             text: 'Author',
             align: 'start',
-            sortable: false,
+            sortable: true,
             value: 'bookAuthor',
           },
           
           {
             text: 'Quantity',
             align: 'start',
-            sortable: false,
+            sortable: true,
             value: 'quantity',
           },
           
         ],
       }
     },
-   
-   mounted(){
-    let params = {};
-    params.limit = 10,
-    params.offset = 0,
-      getAllBook(params).then(res => {
-        this.cols = res.data.['all-book'],
-        console.log(res);
-      }).catch(e=>{
-        console.error(e);
-      })
-   },
    watch:{
     options:{
       handler(val){
@@ -103,13 +116,20 @@ import {getAllBook} from '../dataProvider/loginServices.js'
    },
    methods: {
     async loadData(val){
+      this.loader = true;
     let params = {};
-    params.limit = val.itemsPerPage,
-    params.offset = (val.page-1)*val.itemsPerPage,
+    params.limit = val.itemsPerPage || 10,
+    params.offset = (val.page-1)*val.itemsPerPage || 0,
+    params.filter = this.text || "",
+    params.sortBy = val.sortBy?val.sortBy[0]:"bookName",
+    params.sortOrder = val.sortDesc?val.sortDesc[0] ?"desc":"asc":"asc",
       await getAllBook(params).then(res => {
         this.cols = res.data.['all-book'],
-        console.log(res);
+        this.colLength = res.data._meta['total'],
+        this.loader = false;
+        //console.log(res);
       }).catch(e=>{
+        this.loader = false,
         console.error(e);
       })
     },
@@ -118,28 +138,13 @@ import {getAllBook} from '../dataProvider/loginServices.js'
 </script>
 <style scoped>
 .table{
-    margin: 4px;
-    margin-top: 50px;
+    margin: 2px;
+    margin-top: 160px !important;
     border: 0px rgb(122, 121, 121) solid;
 }
-.scroll-area{
- 
+.textFiled{
+  max-width: 150 px !important;
 }
 </style>
 <style lang="sass" scoped>
-.my-sticky-header-table
-  /* height or max-height is important */
-  height: 310px
-
-  .q-table__top,
-  .q-table__bottom,
-  thead tr:first-child th
-    /* bg color is important for th; just specify one */
-    background-color: #c1f4cd
-
-  thead tr th
-    position: sticky
-    z-index: 1
-  thead tr:first-child th
-    top: 0
 </style>
