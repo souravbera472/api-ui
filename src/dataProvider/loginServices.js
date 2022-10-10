@@ -1,17 +1,27 @@
 var axios = require('axios');
-
+import {base_url} from './super.js';
 export function checkLogin(data){
     var config = {
         method: 'post',
-        url: "http://192.168.0.236:8080/login?userName="+data.userName+"&password="+data.password,
-        //headers: { },
+        url: base_url()+"login?userName="+data.userName+"&password="+data.password,
       };
       return axios(config);
 };
+export function registrationData(data){
+  var config = {
+      method: 'post',
+      url: base_url()+"registration",
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    return axios(config);
+}
 export function getAllBook(params){
     var config = {
         method: 'get',
-        url: "http://192.168.0.236:8080/all-book?limit="+params.limit+"&offset="+params.offset
+        url: base_url()+"all-book?limit="+params.limit+"&offset="+params.offset
         +"&filter="+params.filter+"&sortBy="+params.sortBy+"&sortOrder="+params.sortOrder,
         headers: { },
       };

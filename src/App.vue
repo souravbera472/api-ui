@@ -1,39 +1,12 @@
 <template>
   <div>
     <v-app>
-      <router-view>
-        <!-- <router-link to="/home"></router-link> -->
-      </router-view>
-      <!-- <v-row no-gutters align-content="center">
-        <v-col cols="4"> </v-col>
-        <v-col cols="4">
-          <div v-if="!regFlag && !success">
-          <span>New User ?</span>
-          <v-btn 
-          class="btn pa-0" 
-          outlined text depressed 
-          color="primary"
-          @click="loginClick"
-          >
-            click here
-          </v-btn>
-          <span> for registration </span>
-          </div>
-          <login
-          @success="submit"
-          v-if="!regFlag && !success" 
-          />
-          <registration v-if="regFlag" />
-        </v-col>
-      </v-row> -->
+      <router-view/>
     </v-app>
   </div>
 </template>
 
 <script>
-//import HelloWorld from "./components/HelloWorld.vue";
-//import Login from "./login/Login.vue";
-//import registration from "./login/Registration.vue";
 export default {
   name: "App",
   components: {
@@ -47,21 +20,21 @@ export default {
       success: false,
     };
   },
-  methods: {
-  
-    loginClick(){
-      this.regFlag = true;
+  mounted(){
+     this.checkValue();
     },
-    submit(val){
-      this.success = val;
-      if(val){
-         this.$router.push('/home')
+  methods: {
+  checkValue(){
+      if(localStorage.getItem("router")=="/home"){
+        this.$router.push("./home");
+      }
+      else if(localStorage.getItem("router")){
+         this.$router.push(localStorage.getItem("router"));
+      }
+      else{
+       this.$router.push("./login"); 
       }
     },
-    logout(){
-      this.success = false;
-    },
-    
   },
 };
 </script>
