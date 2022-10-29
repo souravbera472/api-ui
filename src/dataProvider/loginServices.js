@@ -1,14 +1,14 @@
-var axios = require('axios');
+let axios = require('axios');
 import {base_url} from './super.js';
 export function checkLogin(data){
-    var config = {
+    let config = {
         method: 'post',
         url: base_url()+"login?userName="+data.userName+"&password="+data.password,
       };
       return axios(config);
-};
+}
 export function registrationData(data){
-  var config = {
+  let config = {
       method: 'post',
       url: base_url()+"registration",
       headers: { 
@@ -19,7 +19,7 @@ export function registrationData(data){
     return axios(config);
 }
 export function getAllBook(params){
-    var config = {
+    let config = {
         method: 'get',
         url: base_url()+"all-book?limit="+params.limit+"&offset="+params.offset
         +"&filter="+params.filter+"&sortBy="+params.sortBy+"&sortOrder="+params.sortOrder,

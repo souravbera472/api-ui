@@ -1,0 +1,159 @@
+<template>
+  <div>
+    <top-bar />
+
+    <v-row no-gutters style="margin-top: 50px !important">
+      <div style="margin-left: 43%; margin-top: 7%" v-if="loader">
+        <v-progress-circular
+          :size="120"
+          color="primary"
+          indeterminate
+        ></v-progress-circular>
+      </div>
+
+      <div
+        v-else-if="!(bookData.length || loader)"
+        style="margin-left: 40%; margin-top: 7%"
+      >
+        <img src="pic/nodata.png" alt="" />
+        <br />
+        <span style="margin-left: 25%">No Data availabe</span>
+        <br />
+        <div class="mt-5" style="margin-left: -30px">
+          <v-btn @click="clickReq" text depressed rounded>
+            <v-icon dark color="primary">mdi-checkbox-marked-circle</v-icon>
+            <span style="color: #0000cd">Click here for request books</span>
+          </v-btn>
+        </div>
+      </div>
+      <div v-else v-for="(val, index) in bookData" :key="index">
+        <v-card class="mx-auto mt-6 mr-4 ml-7" max-width="344" min-width="330">
+          <v-card-text>
+            <div
+              v-if="val.isAvailable"
+              style="color: #36ce33; font: message-box"
+            >
+              Availabe
+            </div>
+            <div
+              v-if="!val.isAvailable"
+              style="color: #e52012; font: message-box"
+            >
+              Not Availabe (can't request for approve)
+            </div>
+            <p
+              class="text-h4 mt-2"
+              :style="val.isAvailable ? 'color:#36ce33' : 'color:#e52012'"
+            >
+              {{ val.bookName }}
+            </p>
+
+            <p>
+              Written By:
+              <span class="text--primary">{{ val.bookAuthor }}</span>
+            </p>
+            <v-row no-gutters align-md="center" class="ma-0 pa-0">
+              <v-col cols="5">Remove from cart:</v-col>
+                <v-col cols="3">
+                    <v-checkbox
+                  v-model="Selection"
+                  color="info"
+                  :value="val._id"
+                  multiple
+                ></v-checkbox>
+                </v-col>
+                
+            </v-row>
+          </v-card-text>
+          <div class="ml-5">
+            <!-- <v-btn
+              v-b-tooltip.hover
+              title="More Info"
+              class="ml-5"
+              text
+              color="primary"
+              @click="choseIndex(index)"
+            >
+              more info
+            </v-btn> -->
+          </div>
+
+          <v-expand-transition>
+            <v-card
+              v-if="revealId === index"
+              class="transition-fast-in-fast-out v-card--reveal"
+              style="height: 100%"
+            >
+              <v-card-text class="pb-0">
+                <p>Every day cost ₹ 1 per book after 30 days</p>
+                <p class="text-h5 text--primary">Number of Days:</p>
+                <p class="text-h6 text--primary">
+                  {{
+                    Math.floor((Date.now() - val.ct) / (24 * 60 * 60 * 1000))
+                  }}
+                  <span class="text--primary"> Days</span>
+                </p>
+                <p class="text-h6 text--primary">Cost: ₹ 0</p>
+              </v-card-text>
+              <v-card-actions class="pt-0">
+                <v-btn text color="primary" @click="revealId = null">
+                  Close
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-expand-transition>
+        </v-card>
+      </div>
+    </v-row>
+  </div>
+</template>
+<script>
+import TopBar from "../home/TopBar.vue"
+//import VuePerfectScrollbar from 'vue-perfect-scrollbar';
+import {getUserReqBookData} from '../dataProvider/userServices.js'
+  export default {
+    components:{
+      TopBar,
+    },
+    data () {
+      return {
+        loader: true,
+        revealId: null,
+        bookData: [],
+        Selection: [],
+      }
+    },
+    mounted(){
+       this.loadData();
+    },
+   methods: {
+    loadData(){
+        this.loader = true;
+    let data = localStorage.getItem("userId");
+    getUserReqBookData(data).then(res => {
+        this.bookData = res.data.["book-info"];
+        this.loader = false;
+      }).catch(e=>{
+        this.loader = false;
+        console.error(e);
+      })
+    },
+    choseIndex(index){
+      this.revealId = index;
+    },
+   }
+  }
+</script>
+<style scoped>
+.v-card--reveal {
+  bottom: 0;
+  opacity: 1 !important;
+  position: absolute;
+  width: 100%;
+}
+table {
+  margin: 2px;
+  margin-top: 160px !important;
+  color: #e52012;
+}
+</style>

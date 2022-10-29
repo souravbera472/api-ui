@@ -7,17 +7,18 @@
 </template>
 
 <script>
+//import TopBar from './home/TopBar.vue';
 export default {
   name: "App",
   components: {
+    //TopBar
     //HelloWorld,
     //Login,
     //registration,
   },
   data() {
     return {
-      regFlag: false,
-      success: false,
+     loginFlag: false,
     };
   },
   mounted(){
@@ -25,10 +26,7 @@ export default {
     },
   methods: {
   checkValue(){
-      if(localStorage.getItem("router")=="/home"){
-        this.$router.push("./home");
-      }
-      else if(localStorage.getItem("router")){
+      if(localStorage.getItem("router")){
          this.$router.push(localStorage.getItem("router"));
       }
       else{

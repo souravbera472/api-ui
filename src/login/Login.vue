@@ -102,17 +102,25 @@ export default {
       let data = {};
       data.userName = this.email;
       data.password = this.pass;
-      this.snackbar = true;
       checkLogin(data)
         .then((res) => {
           if(res.data.["developer-message"] == "Credential is ok"){
             this.$router.push('/home');
-            localStorage.setItem("router","/home");
+            localStorage.setItem("router","./home");
+            var fName = res.data.result.fName.charAt(0).toUpperCase();
+            var lName = res.data.result.lName.charAt(0).toUpperCase();
+            localStorage.setItem("user",fName+lName);
+            localStorage.setItem("userName",res.data.result.userName);
+            localStorage.setItem("fName",res.data.result.fName);
+            localStorage.setItem("lName",res.data.result.lName);
+            localStorage.setItem("role",res.data.result.role);
+            localStorage.setItem("userId",res.data.result.id);
           }
-            
+          this.snackbar = true;
           this.text = res.data.["user-message"];
         })
         .catch((err) => {
+          this.snackbar = true;
           console.error(err);
         });
     },
