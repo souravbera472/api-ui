@@ -1,11 +1,7 @@
 <template>
     <div>
-    <VuePerfectScrollbar class="scroll-area">
-      <!-- <v-text-field 
-        v-model="search" 
-        label="Search" 
-        single-line>
-       </v-text-field> -->
+    <top-bar/>
+    <VuePerfectScrollbar class="scroll-area" style="margin-top: 50px !important">
     <v-data-table
       :headers="headers"
       :items="cols"
@@ -52,19 +48,19 @@
        <template v-slot:items._id="{ on, props }">
         <v-simple-checkbox class="checkbox" v-bind="props" v-on="on"></v-simple-checkbox>
       </template>
-       
     </v-data-table>
-    <!-- <div>Selected: {{selected}}</div> -->
     </VuePerfectScrollbar>
   </div>
 
 </template>
 <script>
+import TopBar from "./TopBar.vue"
 import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 import {getAllBook} from '../dataProvider/loginServices.js'
   export default {
     components:{
       VuePerfectScrollbar,
+      TopBar,
     },
     data () {
       return {
