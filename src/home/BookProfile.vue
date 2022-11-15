@@ -1,7 +1,17 @@
 <template>
   <div>
     <v-row no-gutters>
-      <div v-if="!bookData.length" style="margin-left: 40%; margin-top: 7%">
+      <div style="margin-left: 43%; margin-top: 7%" v-if="loader">
+        <v-progress-circular
+          :size="120"
+          color="primary"
+          indeterminate
+        ></v-progress-circular>
+      </div>
+      <div
+        v-else-if="!(bookData.length || loader)"
+        style="margin-left: 40%; margin-top: 7%"
+      >
         <img src="pic/nodata.png" alt="" />
         <br />
         <span style="margin-left: 25%">No Data availabe</span>
@@ -31,15 +41,21 @@
           </v-card-text>
           <div class="ml-5 mb-2">
             <v-icon
-            v-b-tooltip.hover
-              title="Book Renewal" 
-            class="mr-5" darck color="primary">
+              v-b-tooltip.hover
+              title="Book Renewal"
+              class="mr-5"
+              darck
+              color="primary"
+            >
               mdi-repeat-once
             </v-icon>
             <v-icon
-            v-b-tooltip.hover
+              v-b-tooltip.hover
               title="Book Return"
-            class="ml-5" darck color="primary">
+              class="ml-5"
+              darck
+              color="primary"
+            >
               mdi-redo-variant
             </v-icon>
             <v-btn
@@ -97,6 +113,7 @@ export default {
   name: "BookProfile",
   data() {
     return {
+      loader: true,
       revealId: null,
         bookData: [],
     };
@@ -113,12 +130,23 @@ export default {
       this.revealId = index;
     },
     getBookData(){
+      this.loader = true;
       let data = localStorage.getItem("userId");
        getUserBookData(data).then( res =>{
-        this.bookData = res.data.["book-info"];
-        console.log(res.data);
+        if(res.data.["user-message"]=="No data available"){
+          this.bookData = [];
+        }
+        else
+           this.bookData = res.data.["book-info"];
+        this.loader = false;
+        
        })
        .catch(e=>{
+        this.loader = false;
+        console.log(e);
+       })
+       .finally(e=>{
+        this.loader = false;
         console.log(e);
        })
     }

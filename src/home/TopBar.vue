@@ -3,21 +3,18 @@
     <v-app-bar color="#003366" dense dark fixed="true" class="appBar">
       <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Page title</v-toolbar-title>
+      <v-toolbar-title>{{ title }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
       <div v-if="role == 'admin'">
         <v-icon
-        class="pa-0 ma-0"
-          @click="cartClick"
+          class="pa-0 ma-0"
+          @click="viewCartClick"
           v-b-tooltip.hover
           title="approve-books"
           >mdi-bell-ring
         </v-icon>
         <v-icon color="red" size="10" class="mr-4 mb-3">mdi-circle</v-icon>
-        <!-- <div class="">
- 2
-        </div> -->
       </div>
 
       <v-icon class="mr-4" @click="cartClick" v-b-tooltip.hover title="cart"
@@ -41,7 +38,7 @@
             </v-avatar>
           </template>
           <v-list>
-            <v-list-item @click="dialog = true">
+            <v-list-item @click="clickDialog">
               <v-list-item-title class="ml-1">
                 <v-icon class="mr-2"> mdi-account-circle </v-icon>
                 Profile
@@ -57,7 +54,8 @@
         </v-menu>
       </div>
     </v-app-bar>
-    <Profile :dialog="dialog" @close="closeDialog()"></Profile>
+    <Profile :count="bookCount" :dialog="dialog" @close="closeDialog()">
+    </Profile>
     <v-navigation-drawer
       v-model="drawer"
       absolute
@@ -77,13 +75,8 @@
           <v-list-item @click="cartClick">
             <v-list-item-title>Your Cart</v-list-item-title>
           </v-list-item>
-
-          <v-list-item>
-            <v-list-item-title>Fizz</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item>
-            <v-list-item-title>Buzz</v-list-item-title>
+          <v-list-item @click="checkClick">
+            <v-list-item-title>Check</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -105,7 +98,14 @@ export default {
       name: "",
       role: "",
       userInfo: {},
+      bookCount: 0,
     };
+  },
+  props: {
+    title: {
+      type: String,
+      default: "No Title",
+    },
   },
   mounted() {
     this.user = localStorage.getItem("user");
@@ -120,6 +120,10 @@ export default {
     }
   },
   methods: {
+    clickDialog(){
+      this.dialog = true;
+      this.bookCount = localStorage.getItem("bookCount");
+    },
     closeDialog(val) {
       this.dialog = val;
     },
@@ -136,9 +140,16 @@ export default {
       localStorage.setItem("router", "./home");
     },
     cartClick() {
-      this.$router.push("./cart");
-      localStorage.setItem("router", "./cart");
+      this.$router.push("./req-cart");
+      localStorage.setItem("router", "./req-cart");
     },
+    viewCartClick() {
+      this.$router.push("./view-cart");
+      localStorage.setItem("router", "./view-cart");
+    },
+    checkClick(){
+      this.$router.push("./check");
+    }
   },
 };
 </script>

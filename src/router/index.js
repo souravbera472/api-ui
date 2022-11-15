@@ -15,9 +15,29 @@ const routes = [
     component: () => import('../home/BookTable.vue')
   },
   {
-    path: '/cart',
-    name: 'profileCart',
-    component: () => import('../cart/profileCart.vue')
+    path: '/check',
+    name: 'Check',
+    component: () => import('../home/Check.vue')
+  },
+  // {
+  //   path: '/cart',
+  //   name: 'profileCart',
+  //   component: () => import('../cart/profileCart.vue')
+  // },
+  {
+    path: '/req-cart',
+    name: 'RequestCart',
+    component: () => import('../cart/RequestCart.vue')
+  },
+  // {
+  //   path: '/view-cart',
+  //   name: 'ViewCart',
+  //   component: () => import('../cart/ViewCart.vue')
+  // },
+  {
+    path: '/view-cart',
+    name: 'ViewCartTab',
+    component: () => import('../cart/ViewCartTab.vue')
   },
   {
     path: '/login',

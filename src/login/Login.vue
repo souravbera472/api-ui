@@ -71,6 +71,7 @@
 </template>
 <script>
 import { checkLogin } from "../dataProvider/loginServices.js";
+import { getNotificationCount } from "../dataProvider/userServices.js";
 export default {
   data: () => ({
     snackbar: false,
@@ -81,6 +82,7 @@ export default {
     valid: false,
     pass: "",
     email: "",
+    userId: "",
     emailRules: [
       (v) => !!v || "User name is your e-mail id",
       (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
@@ -115,6 +117,7 @@ export default {
             localStorage.setItem("lName",res.data.result.lName);
             localStorage.setItem("role",res.data.result.role);
             localStorage.setItem("userId",res.data.result.id);
+            this.getNotificationData(res.data.result.id);
           }
           this.snackbar = true;
           this.text = res.data.["user-message"];
@@ -122,6 +125,16 @@ export default {
         .catch((err) => {
           this.snackbar = true;
           console.error(err);
+        });
+    },
+    getNotificationData(userId) {
+      getNotificationCount(userId)
+        .then((res) => {
+          this.bookCount = res.data.userBookCount;
+          localStorage.setItem("bookCount",this.bookCount);
+        })
+        .catch((e) => {
+          console.error(e);
         });
     },
   },

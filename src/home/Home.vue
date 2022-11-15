@@ -1,12 +1,11 @@
 <template>
   <div>
-    <top-bar/>
+    <top-bar :title="'Your Books'"/>
     <book-profile style="margin-top: 50px !important"/>
   </div>
 </template>
 <script>
 import BookProfile from "./BookProfile.vue";
-//import {getUserBookData} from "../dataProvider/userServices.js"
 import TopBar from "./TopBar.vue"
 export default {
   name: "Home",
@@ -16,22 +15,14 @@ export default {
   },
   data() {
     return {
+      bookCount: 0,
     };
   },
-  // mounted(){
-  //   this.getBookData();
-  // },
-  // methods:{
-  //   getBookData(){
-  //     let data = localStorage.getItem("userId");
-  //      getUserBookData(data).then( res =>{
-  //       console.log(res.data);
-  //      })
-  //      .catch(e=>{
-  //       console.log(e);
-  //      })
-  //   }
-  // }
+  mounted(){
+  },
+  methods:{
+    
+  }
 };
 </script>
 <style scoped>
