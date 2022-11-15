@@ -1,8 +1,6 @@
 <template>
   <div>
-    <top-bar />
-
-    <v-row no-gutters style="margin-top: 50px !important">
+    <v-row no-gutters>
       <div style="margin-left: 43%; margin-top: 7%" v-if="loader">
         <v-progress-circular
           :size="120"
@@ -39,7 +37,7 @@
               v-if="!val.isAvailable"
               style="color: #e52012; font: message-box"
             >
-              Not Availabe (can't request for approve)
+              Not Availabe (can't be approve)
             </div>
             <p
               class="text-h4 mt-2"
@@ -54,15 +52,14 @@
             </p>
             <v-row no-gutters align-md="center" class="ma-0 pa-0">
               <v-col cols="5">Remove from cart:</v-col>
-                <v-col cols="3">
-                    <v-checkbox
+              <v-col cols="3">
+                <v-checkbox
                   v-model="Selection"
                   color="info"
                   :value="val._id"
                   multiple
                 ></v-checkbox>
-                </v-col>
-                
+              </v-col>
             </v-row>
           </v-card-text>
           <div class="ml-5">
@@ -89,7 +86,7 @@
                 <p class="text-h5 text--primary">Number of Days:</p>
                 <p class="text-h6 text--primary">
                   {{
-                    Math.floor((Date.now() - val.ct) / (24 * 60 * 60 * 1000))
+                    Math.floor((Date.now() - val.lu) / (24 * 60 * 60 * 1000))
                   }}
                   <span class="text--primary"> Days</span>
                 </p>
@@ -105,15 +102,38 @@
         </v-card>
       </div>
     </v-row>
+    <my-snackbar></my-snackbar>
+    <my-snackbar :snackbar="snackbar" :text="snackbarText"></my-snackbar>
+    <v-footer fixed max-height="50px" v-if="Selection.length">
+      <v-row no-gutters class="ml-2">
+        <v-col cols="9"></v-col>
+        <v-col cols="3" class="pa-0 ma-0" style="margin-left: 80% !important">
+          <v-btn
+            depressed
+            outlined
+            dark
+            text
+            color="primary"
+            @click="removeCartClick"
+          >
+            <v-icon>mdi-cart-remove</v-icon>
+            Remove from cart
+          </v-btn>
+          <v-btn depressed outlined dark text color="red" @click="cancle">
+            Cancle
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-footer>
   </div>
 </template>
 <script>
-import TopBar from "../home/TopBar.vue"
+import MySnackbar from "../home/MySnackbar.vue"
 //import VuePerfectScrollbar from 'vue-perfect-scrollbar';
-import {getUserReqBookData} from '../dataProvider/userServices.js'
+import {getUserReqBookData,removeReqBooks} from '../dataProvider/userServices.js'
   export default {
     components:{
-      TopBar,
+      MySnackbar,
     },
     data () {
       return {
@@ -121,15 +141,25 @@ import {getUserReqBookData} from '../dataProvider/userServices.js'
         revealId: null,
         bookData: [],
         Selection: [],
+        tabs: null,
+        snackbarText: "",
+        snackbar: false,
       }
     },
     mounted(){
        this.loadData();
     },
+    // watch:{
+    //   Selection:{
+    //     handler(val){
+    //       alert(val)
+    //     }
+    //   }
+    // },
    methods: {
     loadData(){
         this.loader = true;
-    let data = localStorage.getItem("userId");
+       let data = localStorage.getItem("userId");
     getUserReqBookData(data).then(res => {
         this.bookData = res.data.["book-info"];
         this.loader = false;
@@ -141,7 +171,33 @@ import {getUserReqBookData} from '../dataProvider/userServices.js'
     choseIndex(index){
       this.revealId = index;
     },
+    clickReq(){
+      this.$router.push("./books");
+      localStorage.setItem("router", "./books");
+    },
+    cancle(){
+    this.Selection = [];
+    },
+    removeCartClick(){
+      this.snackbar = true;
+      let userId = localStorage.getItem("userId");
+      removeReqBooks(userId,this.Selection).then(res=>{
+         this.snackbarText = res.data.['user-message'];
+      }).catch(e=>{
+        this.snackbarText = "Opps! somthing went wrong";
+        console.error(e);
+      }).finally(e=>{
+        setTimeout(function () { this.fun() }.bind(this),3000);
+        this.Selection=[];
+        console.info(e);
+      })
+    },
+    fun(){
+      this.loadData()
+      this.snackbar=false;
+    },
    }
+   
   }
 </script>
 <style scoped>
@@ -155,5 +211,8 @@ table {
   margin: 2px;
   margin-top: 160px !important;
   color: #e52012;
+}
+.divRow {
+  background-color: rgb(145, 174, 205);
 }
 </style>

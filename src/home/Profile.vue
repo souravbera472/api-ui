@@ -55,12 +55,15 @@ export default {
       lName: "",
       role: "",
       name: "",
-      count: 5,
       cost: 0,
     };
   },
   props: {
     dialog: Boolean,
+    count:{
+      type: Number,
+      default: 0,
+    }
   },
   mounted() {
     this.user = localStorage.getItem("user");
@@ -69,6 +72,7 @@ export default {
     this.lName = localStorage.getItem("lName");
     this.role = localStorage.getItem("role");
     this.name = this.fName + " " + this.lName;
+    
   },
   methods: {
     onClickOutside() {
