@@ -1,6 +1,6 @@
 <template>
   <div>
-    <top-bar :title="'All Books'"/>
+    <top-bar :title="'All Books'" />
     <VuePerfectScrollbar
       class="scroll-area"
       style="margin-top: 50px !important"
@@ -80,12 +80,11 @@
       </v-data-table>
     </VuePerfectScrollbar>
     <my-snackbar :snackbar="snackbar" :text="snackbarText"></my-snackbar>
-    <div class="divRow mb-3" v-if="selected.length">
+    <v-footer fixed max-height="50px" v-if="selected.length">
       <v-row no-gutters>
-        <v-col cols="9" class="mt-1"> You selecte : {{ message }} </v-col>
-        <v-spacer></v-spacer>
-        <v-col cols="3">
-          <v-row class="pa-0 ma-0" style="margin-left: 28% !important">
+        <v-col cols="9" class="pa-0 ma-0">You selecte : {{ message }}</v-col>
+        <v-col cols="3" class="pa-0 ma-0">
+          <div style="margin-left: 30% !important">
             <v-btn
               depressed
               outlined
@@ -100,10 +99,10 @@
             <v-btn depressed outlined dark text color="red" @click="cancle">
               Cancle
             </v-btn>
-          </v-row>
+          </div>
         </v-col>
       </v-row>
-    </div>
+    </v-footer>
   </div>
 </template>
 <script>
@@ -282,6 +281,7 @@ import MySnackbar from './MySnackbar.vue';
     },
     fun(){
       this.snackbar=false;
+      location.reload();
     },
     cancle(){
       this.selected = [];

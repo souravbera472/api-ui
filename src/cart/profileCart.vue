@@ -25,7 +25,7 @@
         </div>
       </div>
       <div v-else v-for="(val, index) in bookData" :key="index">
-        <v-card class="mx-auto mt-6 mr-4 ml-7" max-width="344" min-width="330">
+        <v-card class="mx-auto mt-6 mr-4 ml-7 mb-2" max-width="344" min-width="330">
           <v-card-text>
             <div
               v-if="val.isAvailable"
@@ -75,7 +75,7 @@
             </v-btn> -->
           </div>
 
-          <v-expand-transition>
+          <!-- <v-expand-transition>
             <v-card
               v-if="revealId === index"
               class="transition-fast-in-fast-out v-card--reveal"
@@ -98,7 +98,7 @@
                 </v-btn>
               </v-card-actions>
             </v-card>
-          </v-expand-transition>
+          </v-expand-transition> -->
         </v-card>
       </div>
     </v-row>
