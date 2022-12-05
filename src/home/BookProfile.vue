@@ -27,41 +27,42 @@
         <v-card class="mx-auto mt-6 mr-4 ml-7" max-width="344" min-width="330">
           <v-card-text>
             <div>Isse on: {{ new Date(val.ct).toDateString() }}</div>
-            <p class="text-h4 text--primary">
+            <p class="text-h4">
               {{ val.name }}
             </p>
-            <p>
+            <span class="mb-1">
               Written By: <span class="text--primary">{{ val.author }}</span>
-            </p>
-
-            <p>
+            </span>
+             <br>
+            <span>
               Approved By:
-              <span class="text--primary">{{ val.approvedBy }}</span>
-            </p>
+              <span class="text--primary mb-0">{{ val.approvedBy }}</span>
+            </span>
+            <v-row
+              no-gutters
+              align-md="center"
+              class="ma-0 pa-0"
+              style="height: 30px"
+            >
+              <v-col cols="7" class="pa-0 ma-0"
+                >Return or Renewal Books:
+              </v-col>
+              <v-col cols="3" class="pa-0 ma-0" v-b-tooltip.hover title="disabled">
+                <v-checkbox
+                  v-model="Selection"
+                  color="info"
+                  :value="val._id"
+                  multiple
+                  
+                  v-b-tooltip.hover title="Select"
+                ></v-checkbox>
+              </v-col>
+            </v-row>
           </v-card-text>
-          <div class="ml-5 mb-2">
-            <v-icon
-              v-b-tooltip.hover
-              title="Book Renewal"
-              class="mr-5"
-              darck
-              color="primary"
-            >
-              mdi-repeat-once
-            </v-icon>
-            <v-icon
-              v-b-tooltip.hover
-              title="Book Return"
-              class="ml-5"
-              darck
-              color="primary"
-            >
-              mdi-redo-variant
-            </v-icon>
+          <div class="ml-0 mb-2">
             <v-btn
               v-b-tooltip.hover
               title="More Info"
-              class="ml-5"
               text
               color="primary"
               @click="choseIndex(index)"
@@ -83,7 +84,7 @@
                 <p class="text-h5 text--primary">Number of Days:</p>
                 <p class="text-h6 text--primary">
                   {{
-                    Math.floor((Date.now() - val.ct) / (24 * 60 * 60 * 1000))
+                    Math.floor((Date.now() - val.lu) / (24 * 60 * 60 * 1000))
                   }}
                   <span class="text--primary"> Days</span>
                 </p>
@@ -99,14 +100,49 @@
         </v-card>
       </div>
     </v-row>
+    <MySnackbar :snackbar="snackbar" :text="snackbarText"></MySnackbar>
+    <v-footer fixed max-height="50px" v-if="Selection.length">
+      <v-row no-gutters class="ml-2">
+        <v-col cols="6"></v-col>
+        <v-col cols="6" class="pa-0 ma-0" style="margin-left: 70% !important">
+          <v-btn
+            depressed
+            outlined
+            dark
+            text
+            color="primary"
+            @click="removeOrReturnClick('renewal')"
+          >
+            <v-icon>mdi-repeat-once</v-icon>
+            Renewal Books
+          </v-btn>
+          <v-btn
+            depressed
+            outlined
+            dark
+            text
+            color="primary"
+            @click="removeOrReturnClick('return')"
+          >
+            <v-icon>mdi-redo-variant</v-icon>
+            Return Books
+          </v-btn>
+          <v-btn depressed outlined dark text color="red" @click="cancle">
+            Cancle
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-footer>
   </div>
 </template>
 <script>
 //import VuePerfectScrollbar from "vue-perfect-scrollbar";
 //import TopBar from "./TopBar.vue";
-import {getUserBookData} from "../dataProvider/userServices.js"
+import MySnackbar from "./MySnackbar.vue";
+import {getUserBookData,postUserReqRenewalBooks} from "../dataProvider/userServices.js"
 export default {
   components: {
+    MySnackbar,
     //VuePerfectScrollbar,
     //TopBar,
   },
@@ -116,6 +152,9 @@ export default {
       loader: true,
       revealId: null,
         bookData: [],
+        Selection: [],
+        snackbarText: "",
+        snackbar: false,
     };
   },
   mounted(){
@@ -149,7 +188,25 @@ export default {
         this.loader = false;
         console.log(e);
        })
-    }
+    },
+    removeOrReturnClick(type){
+      this.snackbar = true;
+          let userId = localStorage.getItem("userId");
+          postUserReqRenewalBooks(userId,type,this.Selection).then(res=>{
+             this.snackbarText = res.data.['user-message'];
+          }).catch(e=>{
+            this.snackbarText = "Opps! somthing went wrong";
+            console.error(e);
+          }).finally(e=>{
+            setTimeout(function () { this.fun() }.bind(this),3000);
+            this.Selection=[];
+            console.info(e);
+          })
+    },
+    fun(){
+          //this.loadData()
+          this.snackbar=false;
+        },
   }
 };
 </script>

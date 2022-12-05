@@ -35,6 +35,7 @@
           label="password"
           type="password"
           required
+          @keydown.enter.prevent="Validate"
         ></v-text-field>
 
         <v-btn

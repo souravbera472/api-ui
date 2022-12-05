@@ -11,18 +11,26 @@
       <v-tab-item>
         <profile-cart />
       </v-tab-item>
-      <v-tab-item> This is renewal page</v-tab-item>
-      <v-tab-item> This is return page</v-tab-item>
+      <v-tab-item> 
+        <renewal-cart/>
+      </v-tab-item>
+      <v-tab-item>
+        <return-cart/>
+      </v-tab-item>
     </v-tabs-items>
   </div>
 </template>
 <script>
 import TopBar from "../home/TopBar.vue";
 import ProfileCart from "./profileCart.vue";
+import RenewalCart from './RenewalCart.vue';
+import ReturnCart from './ReturnCart.vue';
 export default {
   components: {
     TopBar,
     ProfileCart,
+    RenewalCart,
+    ReturnCart,
   },
   data() {
     return {
