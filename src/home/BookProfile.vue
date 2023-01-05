@@ -27,7 +27,7 @@
         <v-card class="mx-auto mt-6 mr-4 ml-7" max-width="344" min-width="330">
           <v-card-text>
             <div>Isse on: {{ new Date(val.ct).toDateString() }}</div>
-            <p class="text-h4">
+            <p class="text-h4" style="color:#1976d2">
               {{ val.name }}
             </p>
             <span class="mb-1">

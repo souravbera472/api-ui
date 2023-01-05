@@ -37,3 +37,15 @@ export function approveRenewalRequest(id,data,type){
     };
     return axios(config);
 }
+
+export function addNewBook(data){
+  let config = {
+      method: 'post',
+      url: base_url()+"/add-book",
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    return axios(config);
+}

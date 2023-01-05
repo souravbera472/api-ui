@@ -1,7 +1,17 @@
 <template>
   <div>
     <v-app-bar color="#003366" dense dark fixed="true" class="appBar">
-      <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+      <!-- <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon> -->
+      <v-avatar class="mr-4" size="35" @click="drawer = true"
+      style="cursor: pointer"
+      v-b-tooltip.hover
+      title="Logo">
+      <img
+      style="background-color: brown;"
+        src="../../public/logo/myLogo.jpg"
+        alt="John"
+      >
+    </v-avatar>
 
       <v-toolbar-title>{{ title }}</v-toolbar-title>
 
@@ -19,6 +29,13 @@
 
       <v-icon class="mr-4" @click="cartClick" v-b-tooltip.hover title="cart"
         >mdi-cart</v-icon
+      >
+      <v-icon
+        class="mr-4"
+        @click="allBookClick"
+        v-b-tooltip.hover
+        title="all-books"
+        >mdi-book-open-variant</v-icon
       >
       <v-icon class="mr-4" @click="homeClick" v-b-tooltip.hover title="home"
         >mdi-home</v-icon
@@ -40,13 +57,21 @@
           <v-list>
             <v-list-item @click="clickDialog">
               <v-list-item-title class="ml-1">
-                <v-icon class="mr-2"> mdi-account-circle </v-icon>
+                <v-icon class="mr-2" color="primary">
+                  mdi-account-circle
+                </v-icon>
                 Profile
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="clickBookDialog">
+              <v-list-item-title class="ml-1">
+                <v-icon class="mr-2" color="primary"> mdi-book-plus </v-icon>
+                Add New Book
               </v-list-item-title>
             </v-list-item>
             <v-list-item @click="logoutClick">
               <v-list-item-title class="ml-1">
-                <v-icon class="mr-2"> mdi-logout </v-icon>
+                <v-icon class="mr-2" color="red"> mdi-logout </v-icon>
                 Logout
               </v-list-item-title>
             </v-list-item>
@@ -56,6 +81,7 @@
     </v-app-bar>
     <Profile :count="bookCount" :dialog="dialog" @close="closeDialog()">
     </Profile>
+    <AddNewBookVue :dialog="dialog2" @close="closeDialog2()"></AddNewBookVue>
     <v-navigation-drawer
       v-model="drawer"
       absolute
@@ -75,22 +101,25 @@
           <v-list-item @click="cartClick">
             <v-list-item-title>Your Cart</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="checkClick">
+          <!-- <v-list-item @click="checkClick">
             <v-list-item-title>Check</v-list-item-title>
-          </v-list-item>
+          </v-list-item> -->
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
   </div>
 </template>
 <script>
+import { getNotificationCount } from "../dataProvider/userServices.js";
 import Profile from "./Profile.vue";
+import AddNewBookVue from "./AddNewBook.vue";
 export default {
   name: "TopBar",
-  components: { Profile },
+  components: { Profile, AddNewBookVue },
   data() {
     return {
       dialog: false,
+      dialog2: false,
       drawer: false,
       homeDisable: false,
       userName: "",
@@ -118,14 +147,30 @@ export default {
     if (!localStorage.getItem("router") == "./home") {
       this.homeDisable = true;
     }
+    this.getNotificationData(localStorage.getItem("userId"));
   },
   methods: {
-    clickDialog(){
+    getNotificationData(userId) {
+      getNotificationCount(userId)
+        .then((res) => {
+          this.bookCount = res.data.userBookCount;
+          localStorage.setItem("bookCount", this.bookCount);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    },
+    clickDialog() {
       this.dialog = true;
-      this.bookCount = localStorage.getItem("bookCount");
+    },
+    clickBookDialog() {
+      this.dialog2 = true;
     },
     closeDialog(val) {
       this.dialog = val;
+    },
+    closeDialog2(val) {
+      this.dialog2 = val;
     },
     logoutClick() {
       this.$router.push("./login");
@@ -147,9 +192,9 @@ export default {
       this.$router.push("./view-cart");
       localStorage.setItem("router", "./view-cart");
     },
-    checkClick(){
+    checkClick() {
       this.$router.push("./check");
-    }
+    },
   },
 };
 </script>
