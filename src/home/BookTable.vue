@@ -225,7 +225,9 @@ import MySnackbar from './MySnackbar.vue';
     this.loader = true;
     this.disabledCount = 0;
     let params = {};
-    params.limit = val.itemsPerPage || 10,
+    params.limit = val.itemsPerPage || 10;
+    if(params.limit == -1)
+      params.limit = 50;
     params.offset = (val.page-1)*val.itemsPerPage || 0,
     params.filter = this.text || "",
     params.sortBy = val.sortBy?val.sortBy[0]?val.sortBy[0]:"bookName":"bookName",
